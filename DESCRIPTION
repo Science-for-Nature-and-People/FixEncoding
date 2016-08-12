@@ -1,0 +1,20 @@
+Package: FixEncoding
+Title: Search for and replace invalid UTF-8 bytes
+Version: 0.0.0.9000
+Authors@R: person("Justin", "Kroes", email = "jkroes14@ucsbalum.com",
+    role = c("aut", "cre"))
+Description: Check for invalid UTF-8 bytes on UTF-8 system locales and 
+    replace them with characters of your choosing. 
+Depends:
+    R (>= 3.3.1),
+    dplyr (>= 0.5.0),
+    magrittr (>= 1.5),
+    stringi (>= 1.1.1)
+License: N/A
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 5.0.1
+URL: https://github.com/jkroes/FixEncoding
+BugReports: https://github.com/jkroes/FixEncoding/issues
+SystemRequirements: It is likely that proper use of the functions in this package rely on system environmental variables. At a minimum, I suggest that users be working on a mac, where the default values of LC_COLLATE and LC_CTYPE are UTF-8. For example, running Sys.getlocale() in my RStudio sessions returns "en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8”. See http://pubs.opengroup.org/onlinepubs/7908799/xbd/envvar.html. 
+Suggests: testthat
