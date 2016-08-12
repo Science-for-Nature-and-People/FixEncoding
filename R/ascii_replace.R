@@ -34,7 +34,7 @@
 #'                                 "Title",
 #'                                 ASCII_replacement)
 #' }
-
+#' @export
 ascii_replace <- function(dataset, enc_check_results, column_name, rep_str) {
 
   while (any(search() == "enc_check_results[[column_name]]")) detach("enc_check_results[[column_name]]")

@@ -19,7 +19,7 @@
 #' \dontrun{
 #' errors <- enc_check2(dataset)
 #' }
-
+#' @export
 enc_check2 <- function(dataset) {
 
   # Find indices of dataset elements with invalid UTF-8 bytes

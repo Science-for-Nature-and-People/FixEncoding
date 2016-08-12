@@ -77,7 +77,7 @@
 #' data_idx <- as.numeric(names(searchAuthors[vector_idx]))
 #' dataset$Authors[data_id]
 #' }
-
+#' @export
 enc_check <- function(dataset) {
 
   validBytes <- c( '\n', '\r', '\t','\b', '\a', '\f', '\v', '\\', "\'", "\"", '\`') %>%
