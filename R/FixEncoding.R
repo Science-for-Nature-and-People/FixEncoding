@@ -9,4 +9,5 @@
 #' @import dplyr
 #' @import magrittr
 #' @import stringi
+#' @import data.table
 NULL

@@ -1,60 +1,58 @@
-source("unfinished/check_column_encoding.R")
-dataset <- readRDS("/Users/justin/Desktop/evidence_heat/Sam_data/map_data_final_5_13_R16.rds")
-buggy_columns <- check_column_encoding(dataset)
+#'@title
+#'@description
+#'@details
+#'@param
+#'@return
+#'@examples
+#'@export
+library(stringi)
 
-invalid_bytes <- byte_string[["invalid_bytes"]]
+exp_ascii_replace_exp <- function(dataset, enc_check_results, column_name, rep_str) {
+  source("unfinished/byte_generator.R")
 
-ascii_replace <- function(dataset, enc_check_results, column_name, rep_str) {
-
-  while (any(search() == "enc_check_results[[column_name]]")) detach("enc_check_results[[column_name]]")
-  attach(enc_check_results[[column_name]])
-  # [1] "searchable_idx" "pretty_idx"     "errors"         "unique_errors"
-  # attach(map_matches$Authors) # used for building the code below because of length 3 (or 4 or something. I'm tired) unique errors
-
-  simplification <- function(x) x %>%
-    unname %>%
-    unlist
+  invalid_bytes <- byte_generator()[["invalid_bytes"]]
+  second_match <- sapply(invalid_bytes, grep, enc_check_results[[column_name]], useBytes = TRUE) %>% unlist
+  single_byte_idx <- unname(second_match)
+  single_bytes <- names(second_match) %>% substr(1, 4)
+  searchable_idx <- set_names(single_bytes, single_byte_idx)
 
   # Patterns
-  bytes <- searchable_idx %>%
-    unique
-  bytes <- lapply(1:length(bytes), function(x) replicate(x, bytes, simplify = FALSE)) %>%
-    sapply(., function(x) expand.grid(x, stringsAsFactors = FALSE)) %>%
-    sapply(., function(x) apply(x, 2, as.character)) %>%
-    sapply(., function(x) split(x, 1:nrow(x))) %>%
-    sapply(., unname) %>%
-    sapply(., function(x) lapply(x, paste, collapse = "")) %>%
-    unlist # this may not be necessary
+  usingle_bytes <- searchable_idx %>% unique
+  byte_grid <- lapply(1:length(usingle_bytes), function(x) replicate(x, usingle_bytes, simplify = FALSE)) %>%
+    sapply(expand.grid, stringsAsFactors = FALSE) %>%
+    sapply(apply, 2, as.character) %>%
+    sapply(function(x) split(x, 1:nrow(x))) %>%
+    sapply(unname) %>%
+    sapply(lapply, paste, collapse = "") %>%
+    unlist
 
   # Find byte combinations that match invalid bytes for each unique error-ridden observation
-  unique_errors2 <- simplification(unique_errors) %>% unique
-  byte_matching <- function(j) sapply(bytes, grep, j, useBytes = TRUE)
-  redundant <- sapply(unique_errors2, byte_matching)
-  idx <- apply(redundant, 2, function(x) max(which(x > 0)))
-  unique_bytes <- sapply(names(idx), function(x) extract(redundant[,x], idx[x]) %>% names) %>% unname
+  third_match_fun <- function(j) sapply(byte_grid, grep, j, useBytes = TRUE)
+  lmatch <- sapply(enc_check_results[[column_name]], third_match_fun) # a matrix -- at least for the data I've used for testing. Could change and screw things up...
+  lmatch_idx <- apply(lmatch, 2, function(x) max(which(x > 0))) # only accounts for a single invalid byte sequence per original dataset column element... My guess is that I can fix this by essentailly checking to see if earlier idx are a substring of later idx
+  actual_bytes <- sapply(names(lmatch_idx), function(x) extract(lmatch[,x], lmatch_idx[x]) %>% names) %>% unname
 
   # Replace invalid characters
-  uniqueFix <- mapply(gsub, unique_bytes, rep_str, unique_errors2, MoreArgs = list(useBytes = TRUE)) %>%
+  enc_check_results_fix <- mapply(gsub,
+                                  actual_bytes,
+                                  rep_str,
+                                  enc_check_results[[column_name]],
+                                  MoreArgs = list(useBytes = TRUE)) %>%
     unname
-  errors2 <- simplification(errors)
-  pretty_idx2 <- simplification(pretty_idx)
-
-  for (i in 1:length(unique_errors2)) {
-    errors2 <- gsub(unique_errors2[i], uniqueFix[i], errors2, fixed = TRUE, useBytes = TRUE)
+  dataset %<>% as.data.table
+  column <- dataset[, get(column_name)]
+  for (i in 1:length(enc_check_results[[column_name]])) {
+    column_fix <- gsub(pattern = enc_check_results[[column_name]][i],
+                       replacement = enc_check_results_fix[i],
+                       x = column,
+                       fixed = TRUE,
+                       useBytes = TRUE)
+    column <- column_fix
   }
-
-  dataset[pretty_idx2, column_name] <- errors2
-
-  detach(enc_check_results[[column_name]])
-
-  # return(uniqueFix)
+  dataset %<>% as.data.table
+  dataset[, (column_name) := column]
   return(dataset)
-
 }
-
-
-
-
 
 # setkey(subset_col) # sets all columns as keys (i.e. can subset rows by character vectors, where order corresponds to column order). used later for easy joins
 # subset_col[subset_col[7]] # exmaple of join. I guess the values don't need to be quoted
