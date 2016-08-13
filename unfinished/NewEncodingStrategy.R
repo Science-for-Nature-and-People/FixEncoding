@@ -7,12 +7,12 @@
 
 # But within these there are non-character and control-character code point.
 
-# Do some data mining on http://www.utf8-chartable.de/unicode-utf8-table.pl. Limit the display options and choose "for Perl string literals" for the code point. 
+# Do some data mining on http://www.utf8-chartable.de/unicode-utf8-table.pl. Limit the display options and choose "for Perl string literals" for the code point.
 
 
-byte_generator <- function(datapath) {
+exp_byte_generator <- function(datapath) {
   require(magrittr)
-  
+
   load(datapath) # data on path was created by commented code below
   # start1024URL <- "http://www.utf8-chartable.de/unicode-utf8-table.pl?start=1024&number=1024&utf8=string-literal"
   # sub_num <- seq(1024, 194560, 1024)
@@ -21,25 +21,25 @@ byte_generator <- function(datapath) {
   #   c("http://www.utf8-chartable.de/unicode-utf8-table.pl?number=1024&utf8=string-literal",
   #     .)
   # data <- sapply(allURLs, readLines)
-  
+
   invalidbytes <- function(website) {
-    
+
     out <- tryCatch(
-      
+
       {
         notutf8line <- c(grep("class=\"name\"><", website, useBytes = TRUE, value = TRUE),
                          grep("charnodisplay", website, useBytes = TRUE, value = TRUE))
-        
+
         mypattern <- "<td class=\"utf8\">([^<]*)</td>"
-        
+
         if (length(notutf8line) != 0) {
           notutf8char <- notutf8line %>%
             strsplit("<td class=\"utf8\">", useBytes = TRUE, fixed = TRUE) %>%
-            sapply(extract, 2) %>% 
-            strsplit("</td>") %>% 
+            sapply(extract, 2) %>%
+            strsplit("</td>") %>%
             sapply(extract, 1)
           # Can't use the following because of lack of useBytes argument
-          # mypattern = '<td class="row-text">([^<]*)</td>' # 
+          # mypattern = '<td class="row-text">([^<]*)</td>' #
           # datalines = grep(mypattern,thepage[536:length(thepage)],value=TRUE) # value = TRUE
           # getexpr = function(s,g)substring(s,g,g+attr(g,'match.length')-1)
           # gg = gregexpr(mypattern,datalines)
@@ -47,18 +47,18 @@ byte_generator <- function(datapath) {
           # Tempresult = gsub(mypattern,'\\1',matches)
         } else notutf8char = NULL
       },
-      
+
       condition = function(c) {
         message(c)
       }
-      
+
     )
     return(out)
-    
+
   }
-  
+
   utf8.chartable.de <- sapply(data, invalidbytes) %>% unlist %>% unname
-  
+
   # Additional characters not captured above
   utf8.chartable.de %<>% c(.,
                            "\\xed\\xa0\\x80", # Non Private Use High Surrogate, First
@@ -68,11 +68,11 @@ byte_generator <- function(datapath) {
                            "\\xed\\xb0\\x80", # Low Surrogate, First
                            "\\xed\\xbf\\xbf", # Low Surrogate, Last
                            "\\xee\\x80\\x80" # , # Private Use, First
-                           # as.hexmode(195102:1048575) %>% 
+                           # as.hexmode(195102:1048575) %>%
                            #   paste0("\\U000",.), # U+2FA1E to ...
-                           # as.hexmode(1048576:1114111) %>% 
+                           # as.hexmode(1048576:1114111) %>%
                            #   paste0("\\U00", .) # ... U+10FFFF. Note that this range of non-characters shows up in R, not as Perl literals, but as Unicode regex. For example, the Perl literal \xf0\xaf\xa8\x9e (U+2FA1E) yields "\U0002fa1e" when printed in the console. Note also that this range corresponds to all Unicode beyond CJK.
-  ) 
+  )
 }
 
 
