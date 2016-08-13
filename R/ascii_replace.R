@@ -1,5 +1,5 @@
 #'@export
-exp_ascii_replace_exp <- function(dataset, enc_check_results, column_name, rep_str) {
+ascii_replace <- function(dataset, enc_check_results, column_name, rep_str) {
 
   valid_bytes <- c( '\n', '\\', "\'", "\"", '\`') %>%
     sapply(charToRaw) %>%
@@ -28,10 +28,13 @@ exp_ascii_replace_exp <- function(dataset, enc_check_results, column_name, rep_s
     unlist
 
   # Find byte combinations that match invalid bytes for each unique error-ridden observation
-  third_match_fun <- function(j) sapply(byte_grid, grep, j, useBytes = TRUE)
-  lmatch <- sapply(enc_check_results[[column_name]], third_match_fun) # a matrix -- at least for the data I've used for testing. Could change and screw things up...
-  lmatch_idx <- apply(lmatch, 2, function(x) max(which(x > 0))) # only accounts for a single invalid byte sequence per original dataset column element... My guess is that I can fix this by essentailly checking to see if earlier idx are a substring of later idx
-  actual_bytes <- sapply(names(lmatch_idx), function(x) extract(lmatch[,x], lmatch_idx[x]) %>% names) %>% unname
+  third_match_fun <- function(j) sapply(byte_grid, grepl, j, useBytes = TRUE)
+  lmatch <- sapply(enc_check_results[[column_name]], third_match_fun)
+  lmatch_idx <- apply(lmatch, 2, which)
+  # lmatch_pattern <- sapply(lmatch_idx, names)
+  # grepl("\\x90", "\\x90\\xa9", fixed = TRUE)
+  max_idx <- sapply(lmatch_idx, max) # only accounts for a single invalid byte sequence per original dataset column element... My guess is that I can fix this by essentailly checking to see if earlier idx are a substring of later idx
+  actual_bytes <- sapply(names(max_idx), function(x) extract(lmatch[,x], max_idx[x]) %>% names) %>% unname
 
   # Replace invalid characters
   enc_check_results_fix <- mapply(gsub,
