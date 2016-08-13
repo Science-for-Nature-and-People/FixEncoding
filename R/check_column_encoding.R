@@ -7,10 +7,6 @@
 #'@export
 check_column_encoding <- function(dset, column_names = colnames(dset)) {
 
-  library(magrittr)
-  library(dplyr)
-  library(data.table)
-
   # Convert dataset to data.table
   dset %<>% as.data.table # consider adding some tryCatch later for different kinds of inputs
 
@@ -24,8 +20,7 @@ check_column_encoding <- function(dset, column_names = colnames(dset)) {
   }
 
   # Search for encoding issues by column
-  source("unfinished/byte_generator.R")
-  byte_string <- byte_generator()
+  byte_string <- FixEncoding::byte_generator()
   invalid_string <- byte_string[["invalid_string"]]
   ldset <- dset[, lapply(.SD, function(x) grepl(invalid_string, x, useBytes = TRUE)), .SDcols = column_names] # syntax is iffy?
 

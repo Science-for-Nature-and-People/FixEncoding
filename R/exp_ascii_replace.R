@@ -5,12 +5,10 @@
 #'@return
 #'@examples
 #'@export
-library(stringi)
-
 exp_ascii_replace_exp <- function(dataset, enc_check_results, column_name, rep_str) {
-  source("unfinished/byte_generator.R")
 
-  invalid_bytes <- byte_generator()[["invalid_bytes"]]
+  byte_string <- FixEncoding::byte_generator()
+  invalid_bytes <- byte_string[["invalid_bytes"]]
   second_match <- sapply(invalid_bytes, grep, enc_check_results[[column_name]], useBytes = TRUE) %>% unlist
   single_byte_idx <- unname(second_match)
   single_bytes <- names(second_match) %>% substr(1, 4)
