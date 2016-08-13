@@ -1,8 +1,17 @@
 #'@export
 exp_ascii_replace_exp <- function(dataset, enc_check_results, column_name, rep_str) {
 
-  byte_string <- FixEncoding::byte_generator()
-  invalid_bytes <- byte_string[["invalid_bytes"]]
+  valid_bytes <- c( '\n', '\\', "\'", "\"", '\`') %>%
+    sapply(charToRaw) %>%
+    unname
+  
+  invalid_bytes <- c(0:31, 127:255) %>%
+    as.hexmode %>%
+    as.character %>%
+    extract(., !(. %in% valid_bytes)) %>%
+    paste0("\\x", .) %>%
+    c(., "\\xef\\xbf\\xbd") # plus Unicode replacement character
+
   second_match <- sapply(invalid_bytes, grep, enc_check_results[[column_name]], useBytes = TRUE) %>% unlist
   single_byte_idx <- unname(second_match)
   single_bytes <- names(second_match) %>% substr(1, 4)
