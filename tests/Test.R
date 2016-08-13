@@ -11,7 +11,9 @@ load("/Users/LumpyGrads/Desktop/evidence/Sam_data/evidence_based_5_13_16.RData")
 # Fix encoding issues -----------------------------------------------------
 map_matches <- check_column_encoding(map_data)
 # map_matches$Authors # use to construct ASCII_replacement
-ASCII_replacement <- c(rep("a", times = 4), "e", "!", "%", rep("youcan'tstoptherockandroll", times = 7)) # % and ! are the double replacement for line 6
+ASCII_replacement <- c(rep("a", times = 4), "e", "!", "%", rep("youcan'tstoptherockandroll", times = 9)) # % and ! are the double replacement for line 6
+map_fix <- ascii_replace(map_data, map_matches, "Title", ASCII_replacement)
+meta_match <- check_column_encoding(map_fix)
 
 #### For debugging
 dataset <- map_matches
