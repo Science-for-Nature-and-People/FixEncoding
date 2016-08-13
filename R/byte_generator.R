@@ -1,3 +1,4 @@
+#'@export
 byte_generator <- function() {
   # Because we're running on OS X, we consider most of the special escape
   # sequences invalid. Macs only use \n to indicate a new line, unlike

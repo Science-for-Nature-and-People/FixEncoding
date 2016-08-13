@@ -1,6 +1,4 @@
 # Only necessary for building the adapted function. Not afterwards.
-source("unfinished/check_column_encoding.R")
-source("unfinished/exp_ascii_replace.R")
 # dataset <- readRDS("/Users/justin/Desktop/evidence_heat/Sam_data/map_data_final_5_13_R16.rds")
 dataset <- readRDS("/Users/LumpyGrads/Desktop/evidence/Sam_data/map_data_final_5_13_R16.rds")
 enc_check_results <- check_column_encoding(dataset) # Luckily, this message won't show up on the user's end... I hope. May have to rework when it shows up and what functions are internal.
