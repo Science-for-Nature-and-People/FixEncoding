@@ -1,9 +1,3 @@
-#'@title
-#'@description
-#'@details
-#'@param
-#'@return
-#'@examples
 #'@export
 check_column_encoding <- function(dset, column_names = colnames(dset)) {
 
