@@ -1,10 +1,41 @@
+#'@title Replace invalid UTF-8 bytes.
+#'@description Replace invalid bytes detected by \code{check_column_encoding}
+#'  with valid ASCII or UTF-8 characters. Involves manual construction of a
+#'  replacement vector (see \code{rep_str}).
+#'@param dset A data.frame or data.table.
+#'@param enc_check_results A list returned by calling
+#'  \code{check_column_encoding}.
+#'@param column_name The name of an element in the list returned by
+#'  \code{check_column_encoding}, corresponding to a column header in
+#'  \code{dset} where encoding issues were detected (or possibly false
+#'  positives).
+#'@param rep_str A character vector of the same length as
+#'  \code{enc_check_results[[column_name]]}. Strings within the character vector
+#'  consist of a single character to replace in the corresponding strings of
+#'  \code{enc_check_results[["column_name]]}. As of yet, the function only
+#'  handles replacement of single invalid bytes sequences per
+#'  \code{enc_check_results[["column_name]]} string. This vector must be
+#'  manually constructed, as there is no method for guessing the proper ASCII or
+#'  UTF-8 character to replace an invalid byte sequence. Care must be taken in
+#'  the order of replacement for strings with more than one invalid sequence.
+#'  Until muliple-sequence replacement is added, there is no way to know which
+#'  sequence will be replaced ahead of time. However, it is rare to see strings
+#'  with more than two invalid byte sequences, so simple trial and error should
+#'  suffice if this situation is encountered. Simply specify the correct
+#'  character in rep_str and re-run the code. The function is also only capable
+#'  of replacing single columns at a time. To replace additional columns, the
+#'  data.table returned by \code{ascii_replace} must be fed back into the
+#'  function as the value of \code{dset}--likely with a different value for
+#'  \code{rep_str}.
+#'@return A data.table with the same structure as \code{dset} but valid UTF-8
+#'  bytes.
 #'@export
-ascii_replace <- function(dataset, enc_check_results, column_name, rep_str) {
+ascii_replace <- function(dset, enc_check_results, column_name, rep_str) {
 
   valid_bytes <- c( '\n', '\\', "\'", "\"", '\`') %>%
     sapply(charToRaw) %>%
     unname
-  
+
   invalid_bytes <- c(0:31, 127:255) %>%
     as.hexmode %>%
     as.character %>%
@@ -33,7 +64,7 @@ ascii_replace <- function(dataset, enc_check_results, column_name, rep_str) {
   lmatch_idx <- apply(lmatch, 2, which)
   # lmatch_pattern <- sapply(lmatch_idx, names)
   # grepl("\\x90", "\\x90\\xa9", fixed = TRUE)
-  max_idx <- sapply(lmatch_idx, max) # only accounts for a single invalid byte sequence per original dataset column element... My guess is that I can fix this by essentailly checking to see if earlier idx are a substring of later idx
+  max_idx <- sapply(lmatch_idx, max) # only accounts for a single invalid byte sequence per original dset column element... My guess is that I can fix this by essentailly checking to see if earlier idx are a substring of later idx
   actual_bytes <- sapply(names(max_idx), function(x) extract(lmatch[,x], max_idx[x]) %>% names) %>% unname
 
   # Replace invalid characters
@@ -43,8 +74,8 @@ ascii_replace <- function(dataset, enc_check_results, column_name, rep_str) {
                                   enc_check_results[[column_name]],
                                   MoreArgs = list(useBytes = TRUE)) %>%
     unname
-  dataset %<>% as.data.table
-  column <- dataset[, get(column_name)]
+  if (dset %>% is.data.table %>% not) dset %<>% as.data.table
+  column <- dset[, get(column_name)]
   for (i in 1:length(enc_check_results[[column_name]])) {
     column_fix <- gsub(pattern = enc_check_results[[column_name]][i],
                        replacement = enc_check_results_fix[i],
@@ -53,9 +84,8 @@ ascii_replace <- function(dataset, enc_check_results, column_name, rep_str) {
                        useBytes = TRUE)
     column <- column_fix
   }
-  dataset %<>% as.data.table
-  dataset[, (column_name) := column]
-  return(dataset)
+  dset[, (column_name) := column]
+  return(dset)
 }
 
 # setkey(subset_col) # sets all columns as keys (i.e. can subset rows by character vectors, where order corresponds to column order). used later for easy joins

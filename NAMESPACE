@@ -2,6 +2,7 @@
 
 export(ascii_replace)
 export(check_column_encoding)
+export(enc_check2)
 import(data.table)
 import(dplyr)
 import(magrittr)
