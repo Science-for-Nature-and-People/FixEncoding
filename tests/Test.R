@@ -2,21 +2,21 @@
 
 rm(list = ls())
 
-library("FixEncoding") # I have rewritten DiagnoseEncoding.R as a package, which can be installed via devtools::install_github("jkroes/FixEncoding")
+source("/Users/LumpyGrads/Desktop/FE/R/ascii_replace.R")
+source("/Users/LumpyGrads/Desktop/FE/R/check_column_encoding.R")
+# library("FixEncoding") # I have rewritten DiagnoseEncoding.R as a package, which can be installed via devtools::install_github("jkroes/FixEncoding")
 
-# map_data <- readRDS("/Users/justin/Desktop/evidence_heat/Sam_data/map_data_final_5_13_R16.rds")
 map_data <- readRDS("/Users/LumpyGrads/Desktop/evidence/Sam_data/map_data_final_5_13_R16.rds")
-# load("/Users/justin/Desktop/evidence_heat/Sam_data/evidence_based_5_13_16.RData")
-load("/Users/LumpyGrads/Desktop/evidence/Sam_data/evidence_based_5_13_16.RData")
-# Fix encoding issues -----------------------------------------------------
 map_matches <- check_column_encoding(map_data)
 # map_matches$Authors # use to construct ASCII_replacement
-ASCII_replacement <- c(rep("a", times = 4), "e", "!", "%", rep("youcan'tstoptherockandroll", times = 9)) # % and ! are the double replacement for line 6
-map_fix <- ascii_replace(map_data, map_matches, "Title", ASCII_replacement)
+ASCII_replacement <- c(rep("a", times = 4), "e", "!", "%", rep("youcan'tstoptherockandroll", times = 6)) %>% 
+  cbind(., sort(., decreasing = TRUE))
+map_fix <- ascii_replace(map_data, map_matches, "Authors", ASCII_replacement)
 meta_match <- check_column_encoding(map_fix)
-
+names(meta_match)
+View(map_fix)
 #### For debugging
-dataset <- map_matches
+dset <- map_data
 enc_check_results <- map_matches
 column_name <- "Authors"
 rep_str <- ASCII_replacement

@@ -17,24 +17,23 @@ ascii_replace(dset, enc_check_results, column_name, rep_str)
 \code{dset} where encoding issues were detected (or possibly false
 positives).}
 
-\item{rep_str}{A character vector of the same length as
+\item{rep_str}{A matrix. The number of rows should equal the length of 
+\code{enc_check_results[[column_name]]}. The number of columns should equal
+the maximum number of invalid bytes sequences observed in any element of 
 \code{enc_check_results[[column_name]]}. Strings within the character vector
-consist of a single character to replace in the corresponding strings of
-\code{enc_check_results[["column_name]]}. As of yet, the function only
-handles replacement of single invalid bytes sequences per
-\code{enc_check_results[["column_name]]} string. This vector must be
+consist of either 1) a single character to replace in the corresponding
+strings of \code{enc_check_results[["column_name]]}, or 2) a random filler
+character or string. That is, because some elements of
+\code{enc_check_results[[column_name]]} may have more invalid bytes
+sequences than others, and because the number of columns in the replacement
+matrix is equal to the maximum number of invalid sequences, some matrix rows
+may need dummy strings in order to be completely filled. This matrix must be
 manually constructed, as there is no method for guessing the proper ASCII or
-UTF-8 character to replace an invalid byte sequence. Care must be taken in
-the order of replacement for strings with more than one invalid sequence.
-Until muliple-sequence replacement is added, there is no way to know which
-sequence will be replaced ahead of time. However, it is rare to see strings
-with more than two invalid byte sequences, so simple trial and error should
-suffice if this situation is encountered. Simply specify the correct
-character in rep_str and re-run the code. The function is also only capable
-of replacing single columns at a time. To replace additional columns, the
-data.table returned by \code{ascii_replace} must be fed back into the
-function as the value of \code{dset}--likely with a different value for
-\code{rep_str}.}
+UTF-8 character to replace an invalid byte sequence. The function is only
+capable of replacing single columns at a time. To replace additional
+columns, the data.table returned by \code{ascii_replace} must be fed back
+into the function as the value of \code{dset}--likely with a different value
+for \code{rep_str}.}
 }
 \value{
 A data.table with the same structure as \code{dset} but valid UTF-8
