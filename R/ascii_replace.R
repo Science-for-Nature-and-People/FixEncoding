@@ -13,10 +13,10 @@
 #'  \code{enc_check_results[[column_name]]}. The number of columns should equal 
 #'  the maximum number of invalid bytes sequences observed in any element of 
 #'  \code{enc_check_results[[column_name]]}. Strings within the character vector
-#'  consist of either 1) a single character to replace in the corresponding 
-#'  strings of \code{enc_check_results[[column_name]]}, or 2) a random filler 
-#'  character or string. That is, because some elements of 
-#'  \code{enc_check_results[[column_name]]} may have more invalid bytes 
+#'  consist of either a single character to replace in the corresponding 
+#'  strings of \code{enc_check_results[[column_name]]}, or a random filler 
+#'  character or string. Because some elements of 
+#'  \code{enc_check_results[[column_name]]} may have more invalid byte 
 #'  sequences than others, and because the number of columns in the replacement 
 #'  matrix is equal to the maximum number of invalid sequences, some matrix rows
 #'  may need dummy strings in order to be completely filled. This matrix must be
