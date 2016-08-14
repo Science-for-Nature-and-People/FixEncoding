@@ -1,10 +1,7 @@
 # Prepare session, set paths ----------------------------------------------
 
 rm(list = ls())
-
-source("/Users/LumpyGrads/Desktop/FE/R/ascii_replace.R")
-source("/Users/LumpyGrads/Desktop/FE/R/check_column_encoding.R")
-# library("FixEncoding") # I have rewritten DiagnoseEncoding.R as a package, which can be installed via devtools::install_github("jkroes/FixEncoding")
+library("FixEncoding") # I have rewritten DiagnoseEncoding.R as a package, which can be installed via devtools::install_github("jkroes/FixEncoding")
 
 map_data <- readRDS("/Users/LumpyGrads/Desktop/evidence/Sam_data/map_data_final_5_13_R16.rds")
 map_matches <- check_column_encoding(map_data)
