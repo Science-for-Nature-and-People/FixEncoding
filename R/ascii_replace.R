@@ -13,19 +13,25 @@
 #'  \code{enc_check_results[[column_name]]}. The number of columns should equal 
 #'  the maximum number of invalid bytes sequences observed in any element of 
 #'  \code{enc_check_results[[column_name]]}. Strings within the character vector
-#'  consist of either a single character to replace in the corresponding 
-#'  strings of \code{enc_check_results[[column_name]]}, or a random filler 
-#'  character or string. Because some elements of 
-#'  \code{enc_check_results[[column_name]]} may have more invalid byte 
-#'  sequences than others, and because the number of columns in the replacement 
-#'  matrix is equal to the maximum number of invalid sequences, some matrix rows
-#'  may need dummy strings in order to be completely filled. This matrix must be
-#'  manually constructed, as there is no method for guessing the proper ASCII or
-#'  UTF-8 character to replace an invalid byte sequence. The function is only 
-#'  capable of replacing single columns at a time. To replace additional 
-#'  columns, the data.table returned by \code{ascii_replace} must be fed back 
-#'  into the function as the value of \code{dset}--likely with a different value
-#'  for \code{rep_str}.
+#'  consist of either a single character to replace in the corresponding strings
+#'  of \code{enc_check_results[[column_name]]}, or a random filler character or
+#'  string. Because some elements of \code{enc_check_results[[column_name]]} may
+#'  have more invalid byte sequences than others, and because the number of
+#'  columns in the replacement matrix is equal to the maximum number of invalid
+#'  sequences, some matrix rows may need dummy strings in order to be completely
+#'  filled. This matrix must be manually constructed, as there is no method for
+#'  guessing the proper ASCII or UTF-8 character to replace an invalid byte
+#'  sequence. The function is only capable of replacing single columns at a
+#'  time. To replace additional columns, the data.table returned by
+#'  \code{ascii_replace} must be fed back into the function as the value of
+#'  \code{dset}--likely with a different value for \code{rep_str}. While this
+#'  may seem like an error-prone approach, remember that you can script your
+#'  manual construction. A good idea is to use the same filler word throughout
+#'  your matrix. Then call \code{grep} using that filler word as the value of
+#'  the \code{pattern} argument and the result of calling \code{ascii_replace}
+#'  as the value of argument \xode{x}. If the filler word is matched, it
+#'  probably means that you missed a secondary, tertiary, etc. invalid byte
+#'  sequence in one of your observations. (It's happened to me at least once!).
 #'@return A data.table with the same structure as \code{dset} but valid UTF-8
 #'  bytes.
 #'@export

@@ -1,0 +1,3 @@
+load("/Users/LumpyGrads/Desktop/evidence/Sam_data/map_data_final_5_13_R16.rds")
+load("/Users/LumpyGrads/Desktop/evidence/Sam_data/RData.RData")
+load("/Users/LumpyGrads/Desktop/evidence/Sam_data/evidence_based_5_13_16.RData")
