@@ -9,46 +9,30 @@ check_column_encoding(dset, column_names = colnames(dset))
 \arguments{
 \item{dset}{A data.frame or data.table.}
 
-\item{column_names}{A character vector whose elements are the column names of
-\code{dset} to be searched. Defaults to all columns.}
+\item{column_names}{Names of data.frame columns to search. Defaults to
+\code{colnames(dset)}}
 }
 \value{
-A list of columns where invaliad bytes are detected. Each list
- element, which corresponds to a column, contains a character vector of
- unique observations where detection occurred.
+A list of columns where invalid bytes are detected. Each list element,
+ which corresponds to a column, contains a character vector of unique
+ observations where detection occurred.
 }
 \description{
 \code{check_column_encoding} returns a list of \code{dset}
  observations where invalid UTF-8 bytes are detected by pattern matching,
  organized by original column name. NOTE: This function is intended only for
- use on UTF-8 systems. If in doubt about your system encoding, run
- \code{Sys.getlocale()}.
+ use on UTF-8 systems, such as Mac OS X. If in doubt about your system
+ encoding, run \code{Sys.getlocale()}.
 }
 \details{
 Each byte utilized in pattern matching by
- \code{check_column_encoding} is given as UTF-8 2-digit hexadecimal
- number/code points (rather than binary, decimal, or octal). In particular,
- the invalid bytes are the non-character code point for single-byte UTF-8
- (ASCII), which includes continuation bytes. The code point of continuation
- bytes is not utilized by single-byte characters in UTF-8, enabling computers
- to distinguish between single-byte characters and mutli-byte characters
- without any ambiguity. The rationale for using non-single-byte code point is
- that even if the file being read is not UTF-8, any byte sequences that match
- UTF-8 byte sequences will be displayed as if it were UTF-8 on a Mac
- computer. This function therefore catches byte sequences that absolutely
- cannot be interpreted as UTF-8 characters and will instead be displayed as
- hexidecimal bytes rather than characters in R. It does not guarantee that
- the file is actually UTF-8, or that the characters displayed in R are the
- author's intended characters. For the sake of catching as many errors as
- possible, \code{check_column_encoding} matches UTF-8 continuation bytes,
- which may be part of a valid byte sequence (UTF-8 code point consists of
- between 1 and 4 bytes.) There may be some false positives that should be
- visually checked. The reason I search for these is that sometimes R
- interprets segments, or sub-sequences, of invalid UTF-8 byte sequences as
- valid sequences. Thus, only part of the invalid byte sequence is visually
- displayed as invalid. This is especially a problem with non-UTF-8 encodings,
- which may overlap in code point with UTF-8. \code{enc_check2} lacks false
- positives but also seems to be incapable of catching invalid bytes that
- display in RStudio as continuation bytes.
+ \code{check_column_encoding} is either a single-byte control character in
+ UTF-8 in the range 0x80 - 0x9f or the Unicode replacement character, U+FFFD.
+ This function uses iconv() to replace all invalid UTF-8 bytes with U+FFFD;
+ however, it does not convert control characters that may be present. I leave
+ intact any control characters within the range 0x00 - 0x1f, which R does
+ utilize. For example, to represent the newline character. See ?Quotes for a
+ complete list of control characters. In the future, I may also convert
+ control characters such as the carriage return.
 }
 
