@@ -4,7 +4,7 @@
 \alias{control_replace}
 \title{Replace UTF-8 control bytes.}
 \usage{
-control_replace(dset, enc_check_results, column_name, rep_str, max_seq_length)
+control_replace(dset, enc_check_results, column_name, rep_str)
 }
 \arguments{
 \item{dset}{A data.frame or data.table.}

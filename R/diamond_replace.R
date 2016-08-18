@@ -37,17 +37,12 @@
 #'  lurking in the corresponding element of
 #'  \code{enc_check_results[[column_name]]}. (It's happened to me at least
 #'  once!).
-#'@param max_seq_length The highest number of invalid byte sequences observed in
-#'  any element of {enc_check_results[[column_name]]}. Without the correct
-#'  value, character replacement will not proceed correctly but it is possible
-#'  no error will result. Always check your results!
 #'@return A data.table with the same structure as \code{dset} but valid UTF-8
 #'  bytes.
 #'@export
-diamond_replace <- function(dset, enc_check_results, column_name, rep_str, max_seq_length) {
+diamond_replace <- function(dset, enc_check_results, column_name, rep_str) {
 
-  # In case any columns have mixed results--but not on the same line! At that point, I quit
-  uni_repl_results <- enc_check_results[[column_name]][grepl("\ufffd", enc_check_results[[column_name]])]
+  uni_repl_results <- enc_check_results[[column_name]]
 
   # Pattern replacement on column of unique values
   uni_repl_fix <- uni_repl_results

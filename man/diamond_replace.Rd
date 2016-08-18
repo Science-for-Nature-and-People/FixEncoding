@@ -4,7 +4,7 @@
 \alias{diamond_replace}
 \title{Replace invalid UTF-8 bytes.}
 \usage{
-diamond_replace(dset, enc_check_results, column_name, rep_str, max_seq_length)
+diamond_replace(dset, enc_check_results, column_name, rep_str)
 }
 \arguments{
 \item{dset}{A data.frame or data.table.}
@@ -43,11 +43,6 @@ probably means that you missed a secondary, tertiary, etc. byte sequence
 lurking in the corresponding element of
 \code{enc_check_results[[column_name]]}. (It's happened to me at least
 once!).}
-
-\item{max_seq_length}{The highest number of invalid byte sequences observed in
-any element of {enc_check_results[[column_name]]}. Without the correct
-value, character replacement will not proceed correctly but it is possible
-no error will result. Always check your results!}
 }
 \value{
 A data.table with the same structure as \code{dset} but valid UTF-8
