@@ -1,6 +1,6 @@
 #' FixEncoding: A package for locating and replacing invalid UTF-8 bytes
 #'
-#' The FixEncoding package provides two functions: check_column_encoding.R
+#' The FixEncoding package provides three functions: check_column_encoding.R
 #' for locating non-UTF-8 bytes, control_replace for replacing control bytes,
 #' and diamond_replace.R for replacing invalid UTF-8 bytes.
 #'

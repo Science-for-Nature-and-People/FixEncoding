@@ -1,13 +1,13 @@
 #'@title Replace invalid UTF-8 bytes.
 #'@description Replace invalid bytes detected by \code{check_column_encoding}
 #'  with valid ASCII or UTF-8 characters. Involves manual construction of a
-#'  replacement matrix (see \code{rep_str}). These bytes are represented by the
-#'  Unicode replacement character in this function, which looks like a diamond
-#'  with an internal question mark.
-#'@param dset A data.frame or data.table.
+#'  replacement matrix (see \code{rep_str}). Invalid bytes are represented by
+#'  the Unicode replacement character in this function, which looks like a
+#'  diamond with an internal question mark.
+#'@param dset A data.frame or data.table. Or, if you previously called
+#'  diamond_replace.R and saved the output, the data.table it returned.
 #'@param enc_check_results A list returned by calling
-#'  \code{check_column_encoding}. Or, if you previously called control_replace.R
-#'  and saved the output, the data.table it returned.
+#'  \code{check_column_encoding}.
 #'@param column_name The name of an element in the list returned by
 #'  \code{check_column_encoding}, or a column header in \code{dset} or the
 #'  data.table returned by control_replace.R. These are all equivalent.
@@ -37,8 +37,7 @@
 #'  lurking in the corresponding element of
 #'  \code{enc_check_results[[column_name]]}. (It's happened to me at least
 #'  once!).
-#'@return A data.table with the same structure as \code{dset} but valid UTF-8
-#'  bytes.
+#'@return A data.table with the same structure as \code{dset}.
 #'@export
 diamond_replace <- function(dset, enc_check_results, column_name, rep_str) {
 
@@ -68,9 +67,3 @@ diamond_replace <- function(dset, enc_check_results, column_name, rep_str) {
 
   return(dset)
   }
-
-# setkey(subset_col) # sets all columns as keys (i.e. can subset rows by character vectors, where order corresponds to column order). used later for easy joins
-# subset_col[subset_col[7]] # exmaple of join. I guess the values don't need to be quoted
-
-# Notes
-# subset_col <- dset[, mget(column_names)] # same effect as dplyr::select for multiple columns

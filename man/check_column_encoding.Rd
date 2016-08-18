@@ -19,10 +19,10 @@ A list of columns where invalid bytes are detected. Each list element,
 }
 \description{
 \code{check_column_encoding} returns a list of \code{dset}
- observations where invalid UTF-8 bytes are detected by pattern matching,
- organized by original column name. NOTE: This function is intended only for
- use on UTF-8 systems, such as Mac OS X. If in doubt about your system
- encoding, run \code{Sys.getlocale()}.
+ observations where invalid UTF-8 or UTF-8 control bytes are detected by
+ pattern matching, organized by original column name. NOTE: This function is
+ intended only for use on UTF-8 systems, such as Mac OS X. If in doubt about
+ your system encoding, run \code{Sys.getlocale()}.
 }
 \details{
 Each byte utilized in pattern matching by

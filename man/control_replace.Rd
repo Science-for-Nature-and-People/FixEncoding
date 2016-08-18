@@ -7,11 +7,11 @@
 control_replace(dset, enc_check_results, column_name, rep_str)
 }
 \arguments{
-\item{dset}{A data.frame or data.table.}
+\item{dset}{A data.frame or data.table. Or, if you previously called
+diamond_replace.R and saved the output, the data.table it returned.}
 
 \item{enc_check_results}{A list returned by calling
-\code{check_column_encoding}. Or, if you previously called diamond_replace.R
-and saved the output, the data.table it returned.}
+\code{check_column_encoding}.}
 
 \item{column_name}{The name of an element in the list returned by
 \code{check_column_encoding}, or a column header in \code{dset} or the
@@ -45,20 +45,14 @@ lurking in the corresponding element of
 once!). Finally, if you simply want to get rid of a control character
 without substituting another character, simply use \code{""} as the value of
 that matrix element, as you normally would with \code{sub} pr \code{gsub}.}
-
-\item{max_seq_length}{The highest number of control byte sequences observed in
-any element of {enc_check_results[[column_name]]}. Without the correct
-value, character replacement will not proceed correctly but it is possible
-no error will result. Always check your results!}
 }
 \value{
-A data.table with the same structure as \code{dset} but valid UTF-8
- bytes.
+A data.table with the same structure as \code{dset}.
 }
 \description{
 Replace control bytes detected by \code{check_column_encoding}
  with valid ASCII or UTF-8 characters. Involves manual construction of a
- replacement matrix (see \code{rep_str}). These bytes are represented by
- a backslash followed by lowercase-u and a series of numbers.
+ replacement matrix (see \code{rep_str}). Control bytes are represented by
+ a backslash followed by lowercase-u and a series of hexadecimal numbers.
 }
 

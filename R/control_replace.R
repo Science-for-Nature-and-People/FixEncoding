@@ -1,12 +1,12 @@
 #'@title Replace UTF-8 control bytes.
 #'@description Replace control bytes detected by \code{check_column_encoding}
 #'  with valid ASCII or UTF-8 characters. Involves manual construction of a
-#'  replacement matrix (see \code{rep_str}). These bytes are represented by
-#'  a backslash followed by lowercase-u and a series of numbers.
-#'@param dset A data.frame or data.table.
+#'  replacement matrix (see \code{rep_str}). Control bytes are represented by
+#'  a backslash followed by lowercase-u and a series of hexadecimal numbers.
+#'@param dset A data.frame or data.table. Or, if you previously called
+#'  diamond_replace.R and saved the output, the data.table it returned.
 #'@param enc_check_results A list returned by calling
-#'  \code{check_column_encoding}. Or, if you previously called diamond_replace.R
-#'  and saved the output, the data.table it returned.
+#'  \code{check_column_encoding}.
 #'@param column_name The name of an element in the list returned by
 #'  \code{check_column_encoding}, or a column header in \code{dset} or the
 #'  data.table returned by diamond_replace.R. These are all equivalent.
@@ -38,12 +38,7 @@
 #'  once!). Finally, if you simply want to get rid of a control character
 #'  without substituting another character, simply use \code{""} as the value of
 #'  that matrix element, as you normally would with \code{sub} pr \code{gsub}.
-#'@param max_seq_length The highest number of control byte sequences observed in
-#'  any element of {enc_check_results[[column_name]]}. Without the correct
-#'  value, character replacement will not proceed correctly but it is possible
-#'  no error will result. Always check your results!
-#'@return A data.table with the same structure as \code{dset} but valid UTF-8
-#'  bytes.
+#'@return A data.table with the same structure as \code{dset}.
 #'@export
 control_replace <- function(dset, enc_check_results, column_name, rep_str) {
 

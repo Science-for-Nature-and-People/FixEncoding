@@ -7,11 +7,11 @@
 diamond_replace(dset, enc_check_results, column_name, rep_str)
 }
 \arguments{
-\item{dset}{A data.frame or data.table.}
+\item{dset}{A data.frame or data.table. Or, if you previously called
+diamond_replace.R and saved the output, the data.table it returned.}
 
 \item{enc_check_results}{A list returned by calling
-\code{check_column_encoding}. Or, if you previously called control_replace.R
-and saved the output, the data.table it returned.}
+\code{check_column_encoding}.}
 
 \item{column_name}{The name of an element in the list returned by
 \code{check_column_encoding}, or a column header in \code{dset} or the
@@ -45,14 +45,13 @@ lurking in the corresponding element of
 once!).}
 }
 \value{
-A data.table with the same structure as \code{dset} but valid UTF-8
- bytes.
+A data.table with the same structure as \code{dset}.
 }
 \description{
 Replace invalid bytes detected by \code{check_column_encoding}
  with valid ASCII or UTF-8 characters. Involves manual construction of a
- replacement matrix (see \code{rep_str}). These bytes are represented by the
- Unicode replacement character in this function, which looks like a diamond
- with an internal question mark.
+ replacement matrix (see \code{rep_str}). Invalid bytes are represented by
+ the Unicode replacement character in this function, which looks like a
+ diamond with an internal question mark.
 }
 
