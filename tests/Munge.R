@@ -3,7 +3,7 @@
 rm(list = ls())
 # devtools::install_github("jkroes/FixEncoding@iconv")
 library(FixEncoding)
-map_data <- readRDS("/Users/justin/Desktop/evidence_heat/Sam_data/map_data_final_5_13_R16.rds")
+map_data <- readRDS("/Users/justin/Desktop/FixEncoding/tests/Sam_data/map_data_final_5_13_R16.rds")
 map_matches <- check_column_encoding(map_data)
 
 uni_repl_str <- matrix(c(rep("a", times = 3), "e", rep("'", times = 12), rep.int("jigglypuff", 13), "'", rep.int("jigglypuff", 2)), nrow = 16)
@@ -16,14 +16,15 @@ grep("jigglypuff", fixed_title$Title %>% unique)
 # This is a good indication that there were no secondary bytes (besides the one in element 14) that I missed; otherwise jigglypuff would show up--it was my filler word.
 
 # Example control replace
-control_rep_str = matrix(c(rep_len("", 35),
-                           rep_len("", 35),
-                           rep_len("", 35)), nrow = 35)
+control_rep_str = matrix(c(rep_len("apples", 35),
+                           rep_len("apples", 35),
+                           rep_len("apples", 35)), nrow = 35)
 fixed_2_columns <- control_replace(fixed_title, map_matches, "Title.formatted", control_rep_str)
 meta_fixed_2_columns <- check_column_encoding(fixed_2_columns)
-meta_test %>% names
+meta_fixed_2_columns %>% names
 # [1] "Authors" "Fullcitation"
 
+# Blah
 load("/Users/justin/Desktop/evidence_heat/Sam_data/evidence_based_5_13_16.RData")
 biblio_matches <- check_column_encoding(data.biblio)
 # all.equal(biblio_matches$Title, map_matches$Title)
@@ -32,10 +33,7 @@ fixed_title2 <- diamond_replace(data.biblio, biblio_matches, "Title", uni_repl_s
 
 
 
-
-
-
-# ### Debugging
+# Debugging ---------------------------------------------------------------
 # library(magrittr)
 # library(dplyr)
 # library(stringi)

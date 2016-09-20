@@ -56,7 +56,9 @@ control_replace <- function(dset, enc_check_results, column_name, rep_str) {
     paste(last(uni_control), collapse = "") %>%
     gsub(" ", "", .)
 
-  match_idx <- gregexpr(invalid_string, map_matches$Title.formatted)
+  # Script might be broken here. I just realized it was using a variable
+  # named for some test data. Bullshit.
+  match_idx <- gregexpr(invalid_string, enc_check_results[[column_name]])
 
   max_seq_length <- vector(mode = "numeric", length = length(match_idx))
   for (j in seq_along(match_idx)) {
@@ -70,7 +72,7 @@ control_replace <- function(dset, enc_check_results, column_name, rep_str) {
     }
   }
   max_seq_length <- max_seq_length %>% max
-  ## Max number of sequences. But probably not what we want
+  # # Max number of sequences. But probably not what we want
   # for (j in seq_along(match_idx)) {
   #   list_slice <- match_idx[[j]]
   #   if (length(list_slice) > 1) {
