@@ -50,6 +50,8 @@ replace_bytes <- function(dset, enc_check_results, column_name, rep_str,
   if (convert_control) {
     uni_repl <- control_to_rep_symbol(enc_check_results) %>%
       extract2(column_name)
+  } else {
+    uni_repl <- enc_check_results[[column_name]]
   }
 
   # Pattern replacement on column of unique values
