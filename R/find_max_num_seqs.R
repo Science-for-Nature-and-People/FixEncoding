@@ -1,4 +1,4 @@
-#'@title Replace invalid UTF-8 bytes.
+#'@title Assistance in constructing replacement matrices.
 #'@description Find maximum number of sequences in an element of the results of
 #'  control_to_rep_symbol(check_column_encoding()). Results indicate the number
 #'  of columns needed in the replacement matrix for the respective column name

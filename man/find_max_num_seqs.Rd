@@ -2,7 +2,7 @@
 % Please edit documentation in R/find_max_num_seqs.R
 \name{find_max_num_seqs}
 \alias{find_max_num_seqs}
-\title{Replace invalid UTF-8 bytes.}
+\title{Assistance in constructing replacement matrices.}
 \usage{
 find_max_num_seqs(enc_check_results)
 }

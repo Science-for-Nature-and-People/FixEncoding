@@ -1,4 +1,4 @@
-#'@title Find data.frame/data.table invalid UTF-8 bytes in a data.frame.
+#'@title Find invalid UTF-8 bytes in a data.frame
 #'@description \code{check_column_encoding} returns a list of \code{dset}
 #'  observations where invalid UTF-8 or UTF-8 control bytes are detected by
 #'  pattern matching, organized by original column name. NOTE: This function is

@@ -4,7 +4,8 @@
 \alias{replace_bytes}
 \title{Replace invalid UTF-8 bytes.}
 \usage{
-replace_bytes(dset, enc_check_results, column_name, rep_str)
+replace_bytes(dset, enc_check_results, column_name, rep_str,
+  convert_control = TRUE)
 }
 \arguments{
 \item{dset}{A data.frame or data.table. Or, if you previously called
@@ -42,6 +43,10 @@ probably means that you missed a secondary, tertiary, etc. byte sequence
 lurking in the corresponding element of
 \code{enc_check_results[[column_name]]}. (It's happened to me at least
 once!).}
+
+\item{convert_control}{Specify either \code{TRUE} or \code{FALSE} to
+determine whether control bytes will be converted to the Unicode replacement
+symbol. Set to TRUE by default.}
 }
 \value{
 A data.table with the same structure as \code{dset}.

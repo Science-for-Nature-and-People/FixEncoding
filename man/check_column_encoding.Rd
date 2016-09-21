@@ -2,7 +2,7 @@
 % Please edit documentation in R/check_column_encoding.R
 \name{check_column_encoding}
 \alias{check_column_encoding}
-\title{Find data.frame/data.table invalid UTF-8 bytes in a data.frame.}
+\title{Find invalid UTF-8 bytes in a data.frame}
 \usage{
 check_column_encoding(dset, column_names = colnames(dset))
 }

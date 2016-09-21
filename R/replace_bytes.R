@@ -37,14 +37,20 @@
 #'  lurking in the corresponding element of
 #'  \code{enc_check_results[[column_name]]}. (It's happened to me at least
 #'  once!).
+#'@param convert_control Specify either \code{TRUE} or \code{FALSE} to
+#'determine whether control bytes will be converted to the Unicode replacement
+#'symbol. Set to TRUE by default.
 #'@return A data.table with the same structure as \code{dset}.
 #'@export
-replace_bytes <- function(dset, enc_check_results, column_name, rep_str) {
+replace_bytes <- function(dset, enc_check_results, column_name, rep_str,
+                          convert_control = TRUE) {
 
   # Replace control bytes with Unicode replacement symbol for easier pattern
   # replacement
-  uni_repl <- control_to_rep_symbol(enc_check_results) %>%
-    extract2(column_name)
+  if (convert_control) {
+    uni_repl <- control_to_rep_symbol(enc_check_results) %>%
+      extract2(column_name)
+  }
 
   # Pattern replacement on column of unique values
   uni_repl_fix <- uni_repl
