@@ -56,8 +56,6 @@ control_replace <- function(dset, enc_check_results, column_name, rep_str) {
     paste(last(uni_control), collapse = "") %>%
     gsub(" ", "", .)
 
-  # Script might be broken here. I just realized it was using a variable
-  # named for some test data. Bullshit.
   match_idx <- gregexpr(invalid_string, enc_check_results[[column_name]])
 
   max_seq_length <- vector(mode = "numeric", length = length(match_idx))

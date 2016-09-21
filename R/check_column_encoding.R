@@ -22,7 +22,8 @@
 #'@export
 check_column_encoding <- function(dset, column_names = colnames(dset)) {
 
-  dset %<>% apply(2, iconv, to = "UTF-8", sub = "\ufffd") # This doesn't catch control characters (at least the ones displayed in console as Unicode escape sequences)
+  # Replace invalid bytes with Unicode replacement character
+  dset %<>% apply(2, iconv, to = "UTF-8", sub = "\ufffd")
 
   # Convert dset to data.table
   if (dset %>% is.data.table %>% not) dset %<>% data.table
@@ -30,23 +31,35 @@ check_column_encoding <- function(dset, column_names = colnames(dset)) {
   # Control characters. These are displayed in the console as octal (for the
   # lower range) and Unicode escape sequences. They are not displayed as <xx>,
   # where x is a hex digit, when using View(). This is in contrast to invalid
-  # bytes--the ones that iconv catches.
+  # bytes--the ones that iconv catches. Note: It is important to be aware that
+  # R internally defines the range from \006 to \015 according to ASCII. Thus,
+  # this function catches whitespace characters (plus some others). See
+  # http://www.ascii-code.com/
+  octal_control <- c("\001","\002","\003", "\004", "\005", "\006", "\007",
+                     "\010", "\011", "\012", "\013", "\014", "\015", "\016",
+                     "\017", "\020", "\021", "\022", "\023", "\024", "\025",
+                     "\026", "\027", "\030", "\031", "\032", "\033", "\034",
+                     "\035", "\036", "\037")
   uni_control <- c("\u0080", "\u0081", "\u0082", "\u0083", "\u0084", "\u0085",
                    "\u0086", "\u0087", "\u0088", "\u0089", "\u008a", "\u008b",
                    "\u008c", "\u008d", "\u008e", "\u008f", "\u0090", "\u0091",
                    "\u0092", "\u0093", "\u0094", "\u0095", "\u0096", "\u0097",
                    "\u0098", "\u0099", "\u009a", "\u009b", "\u009c", "\u009d",
                    "\u009e", "\u009f")
-  invalid_bytes <- c(uni_control, "\ufffd")
+  invalid_bytes <- c(octal_control, uni_control, "\ufffd")
 
-  # Use of a single, large string (but not too large ...) eliminates for loops around ldset, below.
-  invalid_string <- invalid_bytes %>%
-    extract(., seq_along(.) - 1) %>%
-    paste("|", collapse = "") %>%
-    paste(last(invalid_bytes), collapse = "") %>%
-    gsub(" ", "", .) # Had to rewrite to avoid a loop
+  # Use of a single, large string (but not too large ...) eliminates for loops
+  # around ldset, below.
+  invalid_string <- invalid_bytes[-length(invalid_bytes)] %>%
+    paste0("|", collapse = "") %>%
+    paste0(last(invalid_bytes), collapse = "")
 
-  ldset <- dset[, lapply(.SD, function(x) grepl(invalid_string, x)), .SDcols = column_names] # syntax is iffy?
+  # Logical data.table indicating invalid strings in each cell
+  # Editor's Note:
+  # .SD seems to say apply over all columns specified, and .SDcols specifies
+  # the columns to apply. The default value of column_names is set to all names.
+  ldset <- dset[, lapply(.SD, function(x) grepl(invalid_string, x)),
+                .SDcols = column_names]
 
   # Remove columns without encoding issues from dset
   lnz <- sapply(ldset, any)
@@ -58,12 +71,26 @@ check_column_encoding <- function(dset, column_names = colnames(dset)) {
               toString(totally_valid_columns))) # may need to use deparse(substitute(.))
   }
 
+  # Editor's note: Produces class "list", but a type of list that I have never
+  # seen before
+  # ucol2 <- vector(mode = "list", length = dim(dset)[2])
+  # for (i in seq_along(names(dset))) {
+  #   ldset[, i, with = FALSE]
+  #   ucol2[[i]] <- dset[ldset[, get(names(dset)[i])],
+  #                     i,
+  #                     with = FALSE] %>%
+  #     unique
+  # }
+
+  # Collect invalid strings as elements of a named list
   ucol <- vector(mode = "list", length = dim(dset)[2])
   for (i in seq_along(names(dset))) {
-    ucol[[i]] <- dset[ldset[, get(names(dset)[i])] == TRUE,
+    ucol[[i]] <- dset[ldset[, get(names(dset)[i])],
                       get(names(dset)[i])] %>%
       unique
   }
+
+
   names(ucol) <- names(dset)
 
   return(ucol)
