@@ -17,11 +17,12 @@
 #'@export
 find_max_num_seqs <- function(enc_check_results, convert_control = TRUE) {
 
+  force(enc_check_results)
+
   if (convert_control) {
-    uni_repl <- control_to_rep_symbol(enc_check_results) %>%
-      extract2(column_name)
-  } else {
-    uni_repl <- enc_check_results[[column_name]]
+    uni_repl <- control_to_rep_symbol(enc_check_results)
+    } else {
+    uni_repl <- enc_check_results
   }
 
   max_seq_lengths <- function(x) {
