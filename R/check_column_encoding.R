@@ -22,6 +22,7 @@
 #'@export
 check_column_encoding <- function(dset, column_names = colnames(dset)) {
 
+  force(column_names)
   # Replace invalid bytes with Unicode replacement character
   dset %<>% apply(2, iconv, to = "UTF-8", sub = "\ufffd")
 
