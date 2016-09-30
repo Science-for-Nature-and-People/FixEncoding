@@ -7,13 +7,15 @@
 #'  is needed by the user for this step.
 #'@param enc_check_results A list returned by calling
 #'  \code{check_column_encoding}.
+#'@param convert_control When counting sequences, should control characters
+#'be included in the count? Set to \code{TRUE} by default.
 #'@return A named list whose element names correspond to those of
 #'  check_column_encoding or control_to_rep_symbol(check_column_encoding()).
 #'  Each element of this list contains a single number, which indicates the
 #'  number of columns needed for the replacement matrix associated with a column
 #'  name fed to replace_bytes().
 #'@export
-find_max_num_seqs <- function(enc_check_results) {
+find_max_num_seqs <- function(enc_check_results, convert_control = TRUE) {
 
   if (convert_control) {
     uni_repl <- control_to_rep_symbol(enc_check_results) %>%

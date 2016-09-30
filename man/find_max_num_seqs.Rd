@@ -4,11 +4,14 @@
 \alias{find_max_num_seqs}
 \title{Assistance in constructing replacement matrices.}
 \usage{
-find_max_num_seqs(enc_check_results)
+find_max_num_seqs(enc_check_results, convert_control = TRUE)
 }
 \arguments{
 \item{enc_check_results}{A list returned by calling
 \code{check_column_encoding}.}
+
+\item{convert_control}{When counting sequences, should control characters
+be included in the count? Set to \code{TRUE} by default.}
 }
 \value{
 A named list whose element names correspond to those of
